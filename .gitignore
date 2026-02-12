@@ -1,0 +1,4 @@
+docker/.env
+docker/webapp/.env
+docker/worker/.env
+docker/webapp/.env
