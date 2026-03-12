@@ -83,6 +83,12 @@ services:
       # DEFAULT_ORG_EXECUTION_CONCURRENCY_LIMIT: 100
       # Internal OTEL configuration
       INTERNAL_OTEL_TRACE_LOGGING_ENABLED: ${INTERNAL_OTEL_TRACE_LOGGING_ENABLED:-0}
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-resend}
+      FROM_EMAIL: ${FROM_EMAIL:-info@trigger.miasolution.io.vn}
+      REPLY_TO_EMAIL: ${REPLY_TO_EMAIL:-info@trigger.miasolution.io.vn}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
+      AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
 
   postgres:
     image: postgres:${POSTGRES_IMAGE_TAG:-14}
