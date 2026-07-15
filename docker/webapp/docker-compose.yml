@@ -154,6 +154,12 @@ services:
     image: bitnamilegacy/clickhouse:${CLICKHOUSE_IMAGE_TAG:-latest}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
+    mem_limit: 3g
+    mem_reservation: 2g
+
+    # RAM + swap tối đa cũng là 3 GB, tức không cho container dùng swap.
+    memswap_limit: 3g
+    mem_swappiness: 0
     ports:
       - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9123:8123
       - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9090:9000
