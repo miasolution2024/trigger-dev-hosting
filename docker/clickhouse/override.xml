@@ -6,8 +6,39 @@
         -->
         <level>warning</level>
     </logger>
-    <!-- Official recommendations for systems with <16GB RAM -->
-    <mark_cache_size>524288000</mark_cache_size> <!-- 500MB -->
+    <!--
+      Giới hạn bộ nhớ ClickHouse tự quản lý ở khoảng 2.25 GB.
+      Thấp hơn Docker hard limit 3 GB để dành headroom.
+    -->
+    <max_server_memory_usage>2415919104</max_server_memory_usage>
+
+    <!--
+      Không sử dụng quá 80% bộ nhớ mà ClickHouse nhìn thấy.
+      Với cgroup 3 GB, giới hạn tỷ lệ tương đương khoảng 2.4 GB.
+      Giới hạn thực tế sẽ chịu cả absolute limit phía trên.
+    -->
+    <max_server_memory_usage_to_ram_ratio>0.80</max_server_memory_usage_to_ram_ratio>
+
+    <!-- Giảm cache index MergeTree xuống 256 MB -->
+    <mark_cache_size>268435456</mark_cache_size>
+
+    <!-- Trigger.dev không cần cache dữ liệu giải nén lớn -->
+    <uncompressed_cache_size>0</uncompressed_cache_size>
+
+    <!-- Tránh quá nhiều truy vấn cùng lúc chiếm RAM -->
+    <max_concurrent_queries>20</max_concurrent_queries>
+
+    <!-- Giảm số luồng merge/mutation nền -->
+    <background_pool_size>4</background_pool_size>
+
+    <!-- Không cho ClickHouse nhân đôi số merge concurrent so với pool -->
+    <background_merges_mutations_concurrency_ratio>1</background_merges_mutations_concurrency_ratio>
+
+    <!-- Giảm các pool nền nhẹ hơn -->
+    <background_schedule_pool_size>16</background_schedule_pool_size>
+    <background_fetches_pool_size>4</background_fetches_pool_size>
+    <background_move_pool_size>2</background_move_pool_size>
+    
     <concurrent_threads_soft_limit_num>1</concurrent_threads_soft_limit_num>
     <profiles>
         <default>
