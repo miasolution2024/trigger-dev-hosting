@@ -23,6 +23,7 @@ services:
       - supervisor
     volumes:
       - shared:/home/node/shared
+      - ./machine-presets.json:/etc/trigger/machine-presets.json:ro
     # Only needed for bootstrap
     user: root
     # Only needed for bootstrap
@@ -39,6 +40,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+
     environment:
       APP_ORIGIN: ${APP_ORIGIN:-http://localhost:8030}
       LOGIN_ORIGIN: ${LOGIN_ORIGIN:-http://localhost:8030}
@@ -89,6 +91,7 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY}
       AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
       AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
+      MACHINE_PRESETS_OVERRIDE_PATH: /etc/trigger/machine-presets.json
 
   postgres:
     image: postgres:${POSTGRES_IMAGE_TAG:-14}
