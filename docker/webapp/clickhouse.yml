@@ -1,0 +1,60 @@
+name: trigger
+
+x-logging: &logging-config
+  driver: ${LOGGING_DRIVER:-local}
+  options:
+    max-size: ${LOGGING_MAX_SIZE:-20m}
+    max-file: ${LOGGING_MAX_FILES:-5}
+    compress: ${LOGGING_COMPRESS:-true}
+
+services:
+  clickhouse:
+    image: bitnamilegacy/clickhouse:${CLICKHOUSE_IMAGE_TAG:-latest}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    # Giới hạn tài nguyên
+    cpus: "2.0"
+    mem_limit: 3g
+    mem_reservation: 2g
+    memswap_limit: 3g
+    mem_swappiness: 0
+    ports:
+      - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9123:8123
+      - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9090:9000
+    environment:
+      CLICKHOUSE_ADMIN_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_ADMIN_PASSWORD: ${CLICKHOUSE_PASSWORD:-password}
+    volumes:
+      - clickhouse:/bitnami/clickhouse
+      - ../clickhouse/override.xml:/bitnami/clickhouse/etc/config.d/override.xml:ro
+    networks:
+      - webapp
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "clickhouse-client",
+          "--host",
+          "localhost",
+          "--port",
+          "9000",
+          "--user",
+          "${CLICKHOUSE_USER:-default}",
+          "--password",
+          "${CLICKHOUSE_PASSWORD:-password}",
+          "--query",
+          "SELECT 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  clickhouse:
+
+networks:
+  docker-proxy:
+    name: docker-proxy
+  webapp:
+    name: webapp
