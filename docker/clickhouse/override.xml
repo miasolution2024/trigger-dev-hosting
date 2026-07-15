@@ -6,38 +6,25 @@
         -->
         <level>warning</level>
     </logger>
-    <!--
-      Giới hạn bộ nhớ ClickHouse tự quản lý ở khoảng 2.25 GB.
-      Thấp hơn Docker hard limit 3 GB để dành headroom.
-    -->
+    <!-- RAM nội bộ ClickHouse: 2.25 GB -->
     <max_server_memory_usage>2415919104</max_server_memory_usage>
-
-    <!--
-      Không sử dụng quá 80% bộ nhớ mà ClickHouse nhìn thấy.
-      Với cgroup 3 GB, giới hạn tỷ lệ tương đương khoảng 2.4 GB.
-      Giới hạn thực tế sẽ chịu cả absolute limit phía trên.
-    -->
     <max_server_memory_usage_to_ram_ratio>0.80</max_server_memory_usage_to_ram_ratio>
 
-    <!-- Giảm cache index MergeTree xuống 256 MB -->
+    <!-- Cache -->
     <mark_cache_size>268435456</mark_cache_size>
-
-    <!-- Trigger.dev không cần cache dữ liệu giải nén lớn -->
     <uncompressed_cache_size>0</uncompressed_cache_size>
 
-    <!-- Tránh quá nhiều truy vấn cùng lúc chiếm RAM -->
-    <max_concurrent_queries>20</max_concurrent_queries>
+    <!-- Giảm số truy vấn đồng thời -->
+    <max_concurrent_queries>10</max_concurrent_queries>
 
-    <!-- Giảm số luồng merge/mutation nền -->
-    <background_pool_size>4</background_pool_size>
-
-    <!-- Không cho ClickHouse nhân đôi số merge concurrent so với pool -->
+    <!-- Giảm CPU dành cho merge/mutation nền -->
+    <background_pool_size>2</background_pool_size>
     <background_merges_mutations_concurrency_ratio>1</background_merges_mutations_concurrency_ratio>
 
-    <!-- Giảm các pool nền nhẹ hơn -->
-    <background_schedule_pool_size>16</background_schedule_pool_size>
-    <background_fetches_pool_size>4</background_fetches_pool_size>
-    <background_move_pool_size>2</background_move_pool_size>
+    <!-- Các tác vụ nền khác -->
+    <background_schedule_pool_size>8</background_schedule_pool_size>
+    <background_fetches_pool_size>2</background_fetches_pool_size>
+    <background_move_pool_size>1</background_move_pool_size>
     
     <concurrent_threads_soft_limit_num>1</concurrent_threads_soft_limit_num>
     <profiles>
@@ -46,6 +33,14 @@
         <max_download_threads>1</max_download_threads>
         <input_format_parallel_parsing>0</input_format_parallel_parsing>
         <output_format_parallel_formatting>0</output_format_parallel_formatting>
+        <!-- Mỗi query tối đa 2 thread xử lý -->
+        <max_threads>2</max_threads>
+
+        <!-- Giảm thread dành cho xử lý INSERT -->
+        <max_insert_threads>1</max_insert_threads>
+
+        <!-- Tránh một query đơn lẻ chiếm quá nhiều CPU -->
+        <max_final_threads>2</max_final_threads>
         </default>
     </profiles>
 </clickhouse>
